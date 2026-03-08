@@ -41,9 +41,9 @@ export const RequestPane: React.FC<IProps> = ({
   const authType = activeRequest.auth.type || 'No Auth';
 
   return (
-    <div className="flex flex-1 flex-col border-r border-gray-200 dark:border-gray-800 min-w-[300px]">
+    <div className="flex flex-1 flex-col border-r border-gray-200/50 min-w-[300px] transition-all">
       {/* Tabs */}
-      <div className="flex gap-1 border-b border-gray-200 px-3 pt-2 dark:border-gray-800 overflow-x-auto hide-scrollbar">
+      <div className="flex gap-1 border-b border-gray-200/50 px-3 pt-2 overflow-x-auto hide-scrollbar">
         {['Params', 'Headers', 'Body', 'Auth', 'Scripts'].map((tab) => (
           <button
             key={tab}
@@ -70,8 +70,8 @@ export const RequestPane: React.FC<IProps> = ({
       {/* Content */}
       <div className="flex-1 overflow-y-auto">
         {activeReqTab === 'Params' && (
-          <div className="flex flex-col min-h-full bg-white dark:bg-[#12151c]">
-            <div className="flex border-b border-gray-200 dark:border-gray-800 text-[11px] font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 dark:bg-[#0d0f14]">
+          <div className="flex flex-col min-h-full bg-transparent">
+            <div className="flex border-b border-gray-200/50 dark:border-gray-800/50 text-[11px] font-semibold text-gray-500 uppercase tracking-wider bg-white/5 dark:bg-black/10">
               <div className="w-8"></div>
               <div className="w-1/3 py-2 px-3 border-r border-gray-200 dark:border-gray-800">
                 {t('common.key')}
@@ -95,8 +95,8 @@ export const RequestPane: React.FC<IProps> = ({
 
         {/* Similar updates cut for brevity assuming full implementation in components */}
         {activeReqTab === 'Headers' && (
-          <div className="flex flex-col min-h-full bg-white dark:bg-[#12151c]">
-            <div className="flex border-b border-gray-200 dark:border-gray-800 text-[11px] font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 dark:bg-[#0d0f14]">
+          <div className="flex flex-col min-h-full bg-transparent">
+            <div className="flex border-b border-gray-200/50 dark:border-gray-800/50 text-[11px] font-semibold text-gray-500 uppercase tracking-wider bg-white/5 dark:bg-black/10">
               <div className="w-8"></div>
               <div className="w-1/3 py-2 px-3 border-r border-gray-200 dark:border-gray-800">
                 {t('common.key')}
@@ -119,7 +119,7 @@ export const RequestPane: React.FC<IProps> = ({
         )}
 
         {activeReqTab === 'Body' && (
-          <div className="flex flex-col h-full bg-white dark:bg-[#12151c]">
+          <div className="flex flex-col h-full bg-transparent">
             <div className="flex items-center gap-2 p-2 border-b border-gray-100 dark:border-gray-800/80">
               {[
                 'none',
@@ -140,7 +140,7 @@ export const RequestPane: React.FC<IProps> = ({
             </div>
             {bodyType === 'JSON' ? (
               <div className="flex flex-1 relative font-mono text-[13px] group">
-                <div className="w-10 flex flex-col items-end py-3 pr-3 text-gray-400 dark:text-gray-600 bg-gray-50 dark:bg-[#0d0f14] border-r border-gray-100 dark:border-gray-800/80 select-none text-[11px]">
+                <div className="w-10 flex flex-col items-end py-3 pr-3 text-gray-400 dark:text-gray-600 bg-white/5 dark:bg-black/10 border-r border-gray-100/50 dark:border-gray-800/50 select-none text-[11px]">
                   <span>1</span>
                 </div>
                 <textarea
@@ -164,8 +164,8 @@ export const RequestPane: React.FC<IProps> = ({
         )}
 
         {activeReqTab === 'Auth' && (
-          <div className="flex h-full bg-white dark:bg-[#12151c]">
-            <div className="w-48 border-r border-gray-100 dark:border-gray-800/80 p-2">
+          <div className="flex h-full bg-transparent">
+            <div className="w-48 border-r border-gray-100/50 dark:border-gray-800/50 p-2">
               <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2 px-2">
                 {t('requestPane.type')}
               </div>

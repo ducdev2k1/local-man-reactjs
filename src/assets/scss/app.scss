@@ -1,2 +1,5 @@
 // Main SCSS Entry – Import all sub-files here
+@use './base/glass';
 @use './components/c-add-collection-modal';
+@use './components/c-header-settings';
+@use './components/c-sidebar';

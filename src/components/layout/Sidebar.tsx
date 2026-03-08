@@ -1,33 +1,27 @@
 /**
  * Component Name: Sidebar
- * Description: Thanh điều hướng bên trái gồm Collections, Environments, History
- * SCSS File: src/assets/scss/components/_c-add-collection-modal.scss
+ * Description: Main Sidebar Container using children components for modularity (<400 lines)
+ * SCSS File: src/assets/scss/components/_c-sidebar.scss
  */
 
 import { useLiveQuery } from 'dexie-react-hooks';
-import {
-  ArrowRightLeft,
-  ChevronDown,
-  ChevronRight,
-  Clock,
-  Folder,
-  Globe,
-  MoreVertical,
-  Plus,
-  Search,
-  X,
-} from 'lucide-react';
+import { Clock, Folder, Globe, Plus, Search } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { db } from '../../db/database';
 import { collectionService } from '../../db/services/collection-service';
+import { requestService } from '../../db/services/request-service';
 import { useRequestStore } from '../../stores/request-store';
 import type { IHistoryItem } from '../../Types';
 import { AddCollectionModal } from '../common/AddCollectionModal';
-import { MethodBadge } from '../common/MethodBadge';
-import { MethodText } from '../common/MethodText';
+import { ConfirmModal } from '../common/ConfirmModal';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
+
+// Sub-components
+import { SidebarCollections } from './SidebarCollections';
+import { SidebarHistory } from './SidebarHistory';
+import { SidebarNav } from './SidebarNav';
 
 interface IProps {
   activeSidebarTab: string;
@@ -44,13 +38,26 @@ export const Sidebar: React.FC<IProps> = ({
 }) => {
   const { t } = useTranslation();
   const openRequest = useRequestStore((state) => state.openRequest);
+  const removeRequestFromStore = useRequestStore(
+    (state) => state.removeRequest,
+  );
+  const updateTabInfo = useRequestStore((state) => state.updateTabInfo);
 
-  // State: Modal & Search
+  // State: UI
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearch, setShowSearch] = useState(false);
+  const [renamingId, setRenamingId] = useState<string | null>(null);
+  const [renameValue, setRenameValue] = useState('');
 
-  // Reactive DB Queries
+  const [confirmModal, setConfirmModal] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  }>({ isOpen: false, title: '', message: '', onConfirm: () => {} });
+
+  // DB Queries
   const collections = useLiveQuery(
     () => db.collections.orderBy('sort_order').toArray(),
     [],
@@ -62,23 +69,19 @@ export const Sidebar: React.FC<IProps> = ({
     [],
   );
 
-  // Computed: Lọc collections theo search query
   const filteredCollections = useMemo(() => {
     if (!searchQuery.trim()) return collections;
-    const query = searchQuery.toLowerCase();
-    return collections.filter((col) => {
-      if (col.name.toLowerCase().includes(query)) return true;
-      const colRequests =
-        requests?.filter((r) => r.collection_id === col.id) || [];
-      return colRequests.some(
-        (r) =>
-          r.name.toLowerCase().includes(query) ||
-          r.url.toLowerCase().includes(query),
-      );
-    });
+    const q = searchQuery.toLowerCase();
+    return (collections || []).filter(
+      (col) =>
+        col.name.toLowerCase().includes(q) ||
+        requests
+          ?.filter((r) => r.collection_id === col.id)
+          .some((r) => r.name.toLowerCase().includes(q)),
+    );
   }, [collections, requests, searchQuery]);
 
-  // Methods
+  // Actions
   const handleToggleCollection = async (
     e: React.MouseEvent,
     id: string,
@@ -88,21 +91,42 @@ export const Sidebar: React.FC<IProps> = ({
     await collectionService.update(id, { isOpen: !isOpen });
   };
 
-  const handleAddCollection = async (name: string, description?: string) => {
-    await collectionService.create({
-      name,
-      description: description || '',
-      sort_order: collections ? collections.length + 1 : 1,
+  const handleAddRequest = async (collectionId: string) => {
+    const id = await requestService.create({
+      collection_id: collectionId,
+      name: 'New Request',
+    });
+    const newReq = await requestService.getById(id);
+    if (newReq) openRequest(newReq);
+  };
+
+  const handleDeleteCollection = (id: string) => {
+    setConfirmModal({
       isOpen: true,
+      title: t('sidebar.deleteCollection'),
+      message: t('common.confirmDeleteCollection'),
+      onConfirm: async () => {
+        requests
+          ?.filter((r) => r.collection_id === id)
+          .forEach((r) => removeRequestFromStore(r.id));
+        await collectionService.delete(id);
+      },
     });
   };
 
-  const handleToggleSearch = () => {
-    setShowSearch((prev) => !prev);
-    if (showSearch) setSearchQuery('');
+  const handleDeleteRequest = (id: string) => {
+    setConfirmModal({
+      isOpen: true,
+      title: t('sidebar.deleteRequest'),
+      message: t('common.confirmDeleteRequest'),
+      onConfirm: async () => {
+        removeRequestFromStore(id);
+        await requestService.delete(id);
+      },
+    });
   };
 
-  const sidebarTabs = [
+  const navTabs = [
     { id: 'collections', icon: Folder, tooltip: t('sidebar.collections') },
     { id: 'environments', icon: Globe, tooltip: t('sidebar.environments') },
     { id: 'history', icon: Clock, tooltip: t('sidebar.history') },
@@ -110,39 +134,20 @@ export const Sidebar: React.FC<IProps> = ({
 
   return (
     <>
-      <nav className="flex w-12 flex-col items-center border-r border-gray-200 bg-gray-50 py-3 dark:border-gray-800 dark:bg-[#0d0f14]">
-        <div className="flex flex-col gap-2 w-full px-2">
-          {sidebarTabs.map((item) => {
-            const isActive = activeSidebarTab === item.id;
-            const activeClass =
-              'bg-blue-50 text-[#4f8ef7] dark:bg-blue-500/10 dark:text-[#4f8ef7]';
-            const inactiveClass =
-              'text-gray-500 hover:bg-gray-200/50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-[#181c25] dark:hover:text-gray-200';
-
-            return (
-              <button
-                key={item.id}
-                onClick={() => setActiveSidebarTab(item.id)}
-                className={`relative flex h-8 w-full items-center justify-center rounded-lg transition-all duration-200 group ${isActive ? activeClass : inactiveClass}`}
-              >
-                <item.icon size={18} strokeWidth={isActive ? 2.5 : 2} />
-                <div className="absolute left-full ml-2 hidden rounded bg-gray-900 px-2 py-1 text-[10px] font-medium text-white shadow-sm group-hover:block dark:bg-white dark:text-gray-900 z-50 whitespace-nowrap">
-                  {item.tooltip}
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </nav>
+      <SidebarNav
+        tabs={navTabs}
+        activeTab={activeSidebarTab}
+        setActiveTab={setActiveSidebarTab}
+      />
 
       <aside
         style={{ width: sidebarWidth }}
-        className="flex flex-col border-r border-gray-200 bg-gray-50 dark:border-gray-800 dark:bg-[#12151c]"
+        className="c-sidebar u-glass-sidebar border-none"
       >
         {activeSidebarTab === 'collections' && (
           <>
-            <div className="flex items-center justify-between p-3">
-              <span className="font-semibold text-gray-800 dark:text-gray-200 text-xs uppercase tracking-wider">
+            <div className="flex items-center justify-between p-3 shrink-0">
+              <span className="font-semibold text-gray-800 dark:text-gray-200 text-[10px] uppercase tracking-widest opacity-70">
                 {t('sidebar.collections')}
               </span>
               <div className="flex gap-1">
@@ -150,17 +155,15 @@ export const Sidebar: React.FC<IProps> = ({
                   variant="ghost"
                   size="icon"
                   onClick={() => setIsModalOpen(true)}
-                  className="h-7 w-7 text-gray-500 dark:text-gray-400"
-                  title={t('sidebar.addCollection')}
+                  className="h-6 w-6"
                 >
                   <Plus size={14} />
                 </Button>
                 <Button
                   variant="ghost"
                   size="icon"
-                  onClick={handleToggleSearch}
-                  className={`h-7 w-7 ${showSearch ? 'text-[#4f8ef7] bg-[#4f8ef7]/10' : 'text-gray-500 dark:text-gray-400'}`}
-                  title={t('sidebar.searchCollections')}
+                  onClick={() => setShowSearch(!showSearch)}
+                  className={`h-6 w-6 ${showSearch ? 'text-[#4f8ef7]' : ''}`}
                 >
                   <Search size={14} />
                 </Button>
@@ -168,151 +171,86 @@ export const Sidebar: React.FC<IProps> = ({
             </div>
 
             {showSearch && (
-              <div className="px-3 pb-2">
+              <div className="px-3 pb-2 shrink-0">
                 <div className="relative flex items-center">
-                  <Search
-                    size={13}
-                    className="absolute left-2.5 text-gray-400 dark:text-gray-500 pointer-events-none"
-                  />
                   <Input
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     placeholder={t('sidebar.searchPlaceholder')}
-                    className="pl-8 pr-8 h-8 text-xs"
+                    className="pl-8 h-8 text-xs u-glass !bg-white/5 border-none"
                     autoFocus
                   />
-                  {searchQuery && (
-                    <button
-                      onClick={() => setSearchQuery('')}
-                      className="absolute right-1.5 p-0.5 rounded text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
-                    >
-                      <X size={12} />
-                    </button>
-                  )}
+                  <Search
+                    size={12}
+                    className="absolute left-2.5 text-gray-400"
+                  />
                 </div>
               </div>
             )}
 
-            <div className="flex-1 overflow-y-auto px-2 pb-4">
-              {filteredCollections?.map((col) => {
-                const colRequests =
-                  requests?.filter((r) => r.collection_id === col.id) || [];
-
-                return (
-                  <div key={col.id} className="mb-0.5 select-none">
-                    <div
-                      onClick={(e) =>
-                        handleToggleCollection(e, col.id, col.isOpen)
-                      }
-                      className="flex cursor-pointer items-center gap-1.5 rounded-md py-1.5 px-2 hover:bg-gray-200/50 dark:hover:bg-[#1e2330] text-gray-800 dark:text-gray-200 transition-colors"
-                    >
-                      {col.isOpen ? (
-                        <ChevronDown
-                          size={14}
-                          className="text-gray-400 dark:text-gray-500"
-                        />
-                      ) : (
-                        <ChevronRight
-                          size={14}
-                          className="text-gray-400 dark:text-gray-500"
-                        />
-                      )}
-                      <Folder
-                        size={14}
-                        className="text-[#4f8ef7] fill-[#4f8ef7]/20 dark:fill-[#4f8ef7]/30"
-                      />
-                      <span className="truncate text-xs font-medium">
-                        {col.name}
-                      </span>
-                    </div>
-
-                    {col.isOpen && (
-                      <div className="ml-5 mt-0.5 mb-1.5 space-y-0.5 border-l border-gray-200 dark:border-gray-800">
-                        {colRequests.map((item) => (
-                          <div
-                            key={item.id}
-                            onClick={() => openRequest(item)}
-                            className="group flex cursor-pointer items-center justify-between rounded-md py-1.5 pl-3 pr-2 transition-colors hover:bg-gray-200/50 dark:hover:bg-[#1e2330] text-gray-700 dark:text-gray-300"
-                          >
-                            <div className="flex items-center gap-2 overflow-hidden">
-                              <MethodBadge method={item.method} />
-                              <span className="truncate text-[12px] dark:group-hover:text-gray-100">
-                                {item.name}
-                              </span>
-                            </div>
-                            <MoreVertical
-                              size={14}
-                              className="opacity-0 text-gray-400 dark:text-gray-500 group-hover:opacity-100 transition-opacity"
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
-
-              {searchQuery && filteredCollections?.length === 0 && (
-                <div className="flex flex-col items-center justify-center py-8 text-gray-400 dark:text-gray-500">
-                  <Search size={24} className="mb-2 opacity-30" />
-                  <span className="text-xs">{t('sidebar.noResults')}</span>
-                </div>
-              )}
-            </div>
+            <SidebarCollections
+              collections={filteredCollections || []}
+              requests={requests || []}
+              renamingId={renamingId}
+              renameValue={renameValue}
+              setRenamingId={setRenamingId}
+              setRenameValue={setRenameValue}
+              onToggleCollection={handleToggleCollection}
+              onAddRequest={handleAddRequest}
+              onRenameCollection={(col) => {
+                setRenamingId(col.id);
+                setRenameValue(col.name);
+              }}
+              onDeleteCollection={handleDeleteCollection}
+              onRenameRequest={(req) => {
+                setRenamingId(req.id);
+                setRenameValue(req.name);
+              }}
+              onDuplicateRequest={async (id) => {
+                const nId = await requestService.duplicate(id);
+                const nR = nId ? await requestService.getById(nId) : null;
+                if (nR) openRequest(nR);
+              }}
+              onDeleteRequest={handleDeleteRequest}
+              onOpenRequest={openRequest}
+              submitRenameCollection={async (id) => {
+                if (renameValue.trim())
+                  await collectionService.update(id, { name: renameValue });
+                setRenamingId(null);
+              }}
+              submitRenameRequest={async (id) => {
+                if (renameValue.trim()) {
+                  await requestService.update(id, { name: renameValue });
+                  updateTabInfo(id, { name: renameValue });
+                }
+                setRenamingId(null);
+              }}
+            />
           </>
         )}
 
         {activeSidebarTab === 'history' && (
-          <>
-            <div className="p-3 border-b border-gray-200 dark:border-gray-800">
-              <span className="font-semibold text-gray-800 dark:text-gray-200 text-xs uppercase tracking-wider">
-                {t('sidebar.history')}
-              </span>
-            </div>
-            <div className="flex-1 overflow-y-auto">
-              {mockHistory.map((h) => {
-                const isSuccess = h.status === 200 || h.status === 201;
-                const statusClass = isSuccess
-                  ? 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400'
-                  : 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400';
-
-                return (
-                  <div
-                    key={h.id}
-                    className="p-3 border-b border-gray-100 dark:border-gray-800/60 hover:bg-gray-50 dark:hover:bg-[#1e2330] cursor-pointer group transition-colors"
-                  >
-                    <div className="flex justify-between items-center mb-1">
-                      <div className="flex items-center gap-2">
-                        <MethodText method={h.method} />
-                        <span className="text-xs font-medium text-gray-700 dark:text-gray-300 group-hover:text-gray-900 dark:group-hover:text-gray-100 truncate max-w-[120px] transition-colors">
-                          {h.name}
-                        </span>
-                      </div>
-                      <span
-                        className={`text-[10px] px-1.5 py-0.5 rounded ${statusClass}`}
-                      >
-                        {h.status}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center text-[10px] text-gray-400 dark:text-gray-500">
-                      <span>{h.time}</span>
-                      <ArrowRightLeft
-                        size={10}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity"
-                      />
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </>
+          <SidebarHistory history={mockHistory} />
         )}
       </aside>
 
       <AddCollectionModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        onSubmit={handleAddCollection}
+        onSubmit={(n) =>
+          collectionService.create({
+            name: n,
+            sort_order: collections?.length || 0,
+            isOpen: true,
+          })
+        }
+      />
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        onClose={() => setConfirmModal((p) => ({ ...p, isOpen: false }))}
+        onConfirm={confirmModal.onConfirm}
       />
     </>
   );

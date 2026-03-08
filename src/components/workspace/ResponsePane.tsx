@@ -23,11 +23,11 @@ export const ResponsePane: React.FC<IProps> = ({
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-1 flex-col bg-white dark:bg-[#12151c] min-w-[300px]">
+    <div className="flex flex-1 flex-col min-w-[300px] transition-all">
       {showResponse ? (
         <>
           {/* Status Bar */}
-          <div className="flex items-center justify-between border-b border-gray-200/80 px-4 py-2 bg-gray-50/50 dark:border-gray-800/80 dark:bg-[#0d0f14]/50 shrink-0">
+          <div className="flex items-center justify-between border-b border-gray-200/50 px-4 py-2 shrink-0">
             <div className="flex items-center gap-4 text-[12px] font-mono">
               <span className="flex items-center gap-1.5 font-bold text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-500/10 px-2 py-0.5 rounded-md">
                 <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>{' '}
@@ -123,8 +123,8 @@ export const ResponsePane: React.FC<IProps> = ({
             )}
 
             {responseTab === 'Headers' && (
-              <div className="flex flex-col min-h-full bg-white dark:bg-[#12151c]">
-                <div className="flex border-b border-gray-200 dark:border-gray-800 text-[11px] font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 dark:bg-[#0d0f14]">
+              <div className="flex flex-col min-h-full bg-transparent">
+                <div className="flex border-b border-gray-200/50 dark:border-gray-800/50 text-[11px] font-semibold text-gray-500 uppercase tracking-wider bg-white/5 dark:bg-black/10">
                   <div className="w-1/2 py-2 px-4 border-r border-gray-200 dark:border-gray-800">
                     {t('common.name')}
                   </div>
@@ -154,7 +154,7 @@ export const ResponsePane: React.FC<IProps> = ({
           </div>
         </>
       ) : (
-        <div className="flex h-full flex-col items-center justify-center text-gray-400 bg-gray-50/50 dark:bg-[#0d0f14]/50">
+        <div className="flex h-full flex-col items-center justify-center text-gray-400 bg-transparent">
           <TerminalSquare
             size={48}
             className="mb-4 opacity-10"

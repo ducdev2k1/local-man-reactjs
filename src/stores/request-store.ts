@@ -24,6 +24,11 @@ interface RequestStore {
   closeTab: (id: string) => void;
   updateActiveRequest: (partial: Partial<IApiRequest>) => void;
   saveRequest: () => Promise<void>;
+  removeRequest: (id: string) => void;
+  updateTabInfo: (id: string, partial: Partial<TabInfo>) => void;
+  closeOthers: (id: string) => void;
+  closeToTheRight: (id: string) => void;
+  duplicateTab: (id: string) => Promise<void>;
 }
 
 export const useRequestStore = create<RequestStore>((set, get) => ({
@@ -132,6 +137,68 @@ export const useRequestStore = create<RequestStore>((set, get) => ({
         isDirty: false,
         openTabs: newTabs,
       });
+    }
+  },
+
+  removeRequest: (id: string) => {
+    const { openTabs, activeTabId } = get();
+    const newTabs = openTabs.filter((t) => t.id !== id);
+    let nextActiveId = activeTabId;
+    let nextActiveRequest = get().activeRequest;
+
+    if (activeTabId === id) {
+      nextActiveId = newTabs.length > 0 ? newTabs[newTabs.length - 1].id : null;
+      // In a real app we'd load the next request here, but for now we'll just clear it or let the component handle it
+      nextActiveRequest = null;
+    }
+
+    set({
+      openTabs: newTabs,
+      activeTabId: nextActiveId,
+      activeRequest: nextActiveRequest,
+    });
+  },
+
+  updateTabInfo: (id: string, partial: Partial<TabInfo>) => {
+    const { openTabs } = get();
+    const newTabs = openTabs.map((t) =>
+      t.id === id ? { ...t, ...partial } : t,
+    );
+    set({ openTabs: newTabs });
+  },
+
+  closeOthers: (id: string) => {
+    const { openTabs } = get();
+    const newTabs = openTabs.filter((t) => t.id === id);
+    set({ openTabs: newTabs, activeTabId: id });
+    // In a real app, load the request for 'id' if not already active
+  },
+
+  closeToTheRight: (id: string) => {
+    const { openTabs, activeTabId } = get();
+    const index = openTabs.findIndex((t) => t.id === id);
+    if (index === -1) return;
+
+    const newTabs = openTabs.slice(0, index + 1);
+    let nextActiveId = activeTabId;
+
+    // If active tab was to the right, switch to the 'id' tab
+    const activeIndex = openTabs.findIndex((t) => t.id === activeTabId);
+    if (activeIndex > index) {
+      nextActiveId = id;
+    }
+
+    set({ openTabs: newTabs, activeTabId: nextActiveId });
+  },
+
+  duplicateTab: async (id: string) => {
+    const newId = await requestService.duplicate(id);
+    if (newId) {
+      const newReq = await requestService.getById(newId);
+      if (newReq) {
+        const { openRequest } = get();
+        await openRequest(newReq);
+      }
     }
   },
 }));

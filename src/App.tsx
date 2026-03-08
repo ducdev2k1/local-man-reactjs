@@ -79,9 +79,12 @@ export default function App() {
 
   return (
     <div
-      className={`${isDark ? 'dark' : ''} h-screen w-screen overflow-hidden font-sans text-[13px] antialiased bg-white dark:bg-[#0d0f14] text-gray-800 dark:text-gray-300 transition-colors selection:bg-[#4f8ef7]/30`}
+      className={`${isDark ? 'dark' : ''} h-screen w-screen overflow-hidden font-sans text-[13px] antialiased text-gray-800 dark:text-gray-300 transition-colors selection:bg-[#4f8ef7]/30`}
     >
-      <div className="flex h-full flex-col">
+      {/* Dynamic Background */}
+      <div className="u-bg-vibrant pointer-events-none" />
+
+      <div className="flex h-full flex-col relative z-0">
         <Header themeMode={themeMode} setThemeMode={setThemeMode} />
 
         <div className="flex flex-1 overflow-hidden">
@@ -92,10 +95,10 @@ export default function App() {
             sidebarWidth={sidebarWidth}
           />
 
-          <main className="flex flex-1 flex-col bg-white dark:bg-[#12151c] min-w-0">
+          <main className="flex flex-1 flex-col min-w-0 u-glass-deep !border-none !rounded-none">
             <AddressBar handleSend={handleSend} isSending={isSending} />
 
-            <div className="flex flex-1 overflow-hidden border-t border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-[#0d0f14]">
+            <div className="flex flex-1 overflow-hidden border-t border-gray-200/50 dark:border-gray-800/50">
               <RequestPane
                 activeReqTab={activeReqTab}
                 setActiveReqTab={setActiveReqTab}

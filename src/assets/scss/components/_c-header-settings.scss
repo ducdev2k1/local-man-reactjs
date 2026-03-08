@@ -1,0 +1,6 @@
+// Header settings styles
+.c-header-settings {
+  &_trigger {
+    @apply flex h-8 w-8 items-center justify-center rounded-md hover:bg-gray-100 text-gray-500 dark:text-gray-400 dark:hover:bg-[#181c25] transition-colors focus:outline-none;
+  }
+}

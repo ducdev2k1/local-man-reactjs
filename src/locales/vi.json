@@ -16,12 +16,19 @@
     "urlPlaceholder": "Nhập URL API..."
   },
   "common": {
+    "addFolder": "Thêm thư mục",
+    "addRequest": "Thêm yêu cầu",
     "cancel": "Hủy",
+    "confirmDeleteCollection": "Bạn có chắc chắn muốn xóa bộ sưu tập này và tất cả các yêu cầu bên trong không?",
+    "confirmDeleteRequest": "Bạn có chắc chắn muốn xóa yêu cầu này không?",
     "copied": "Đã sao chép",
     "copy": "Sao chép",
+    "delete": "Xóa",
     "description": "Mô tả",
+    "duplicate": "Nhân bản",
     "key": "Khóa",
     "name": "Tên",
+    "rename": "Đổi tên",
     "value": "Giá trị"
   },
   "footer": {
@@ -31,9 +38,11 @@
     "workspace": "Không gian làm việc: Cá nhân"
   },
   "header": {
+    "language": "Ngôn ngữ",
     "requests": "Yêu cầu",
     "runner": "Trình chạy",
     "synced": "Đã đồng bộ",
+    "theme": "Giao diện",
     "themeDark": "Tối",
     "themeLight": "Sáng",
     "themeSystem": "Hệ thống"
@@ -55,6 +64,7 @@
   "sidebar": {
     "addCollection": "Thêm bộ sưu tập",
     "collections": "Bộ sưu tập",
+    "deleteRequest": "Xóa yêu cầu",
     "environments": "Môi trường",
     "history": "Lịch sử",
     "noResults": "Không tìm thấy kết quả",

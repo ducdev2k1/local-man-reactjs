@@ -1,0 +1,23 @@
+.c-sidebar {
+  @apply flex flex-col bg-transparent border-none;
+
+  &_nav {
+    @apply flex w-12 flex-col items-center border-r border-white/10 bg-transparent py-3;
+  }
+
+  &_tab-btn {
+    @apply relative flex h-8 w-full items-center justify-center rounded-lg transition-all duration-300;
+
+    &-active {
+      @apply bg-gradient-to-r from-blue-500/20 to-transparent border-l-2 border-[#22d3ee] text-white shadow-[0_0_15px_rgba(59,130,246,0.2)];
+    }
+
+    &-inactive {
+      @apply text-slate-400 hover:bg-white/5 hover:text-white;
+    }
+  }
+
+  &_item {
+    @apply flex cursor-pointer items-center gap-1.5 rounded-md py-1.5 px-2 hover:bg-gray-200/50 dark:hover:bg-[#1e2330] text-gray-800 dark:text-gray-200 transition-colors;
+  }
+}

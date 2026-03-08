@@ -16,12 +16,19 @@
     "urlPlaceholder": "Enter API URL..."
   },
   "common": {
+    "addFolder": "Add Folder",
+    "addRequest": "Add Request",
     "cancel": "Cancel",
+    "confirmDeleteCollection": "Are you sure you want to delete this collection and all requests inside?",
+    "confirmDeleteRequest": "Are you sure you want to delete this request?",
     "copied": "Copied",
     "copy": "Copy",
+    "delete": "Delete",
     "description": "Description",
+    "duplicate": "Duplicate",
     "key": "Key",
     "name": "Name",
+    "rename": "Rename",
     "value": "Value"
   },
   "footer": {
@@ -31,9 +38,11 @@
     "workspace": "Workspace: Personal"
   },
   "header": {
+    "language": "Language",
     "requests": "Requests",
     "runner": "Runner",
     "synced": "Synced",
+    "theme": "Theme",
     "themeDark": "Dark",
     "themeLight": "Light",
     "themeSystem": "System"
@@ -55,6 +64,7 @@
   "sidebar": {
     "addCollection": "Add Collection",
     "collections": "Collections",
+    "deleteRequest": "Delete Request",
     "environments": "Environments",
     "history": "History",
     "noResults": "No results found",

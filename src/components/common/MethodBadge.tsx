@@ -16,7 +16,7 @@ export const MethodBadge: React.FC<IProps> = ({ method }) => {
   };
   return (
     <span
-      className={`text-[9px] font-bold px-1.5 py-0.5 rounded-sm ${colors[method as string] || 'text-gray-500'}`}
+      className={`text-[8px] font-black px-1.5 py-0.5 rounded-md tracking-wider ${colors[method as string] || 'text-gray-500 bg-gray-100 dark:bg-gray-800'}`}
     >
       {method}
     </span>
