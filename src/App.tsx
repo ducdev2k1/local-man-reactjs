@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { IHistoryItem } from './Types';
+import type { IApiResponse } from './Types/models';
 import { Footer } from './components/layout/Footer';
 import { Header } from './components/layout/Header';
 import { Sidebar } from './components/layout/Sidebar';
@@ -7,6 +8,8 @@ import { AddressBar } from './components/workspace/AddressBar';
 import { RequestPane } from './components/workspace/RequestPane';
 import { ResponsePane } from './components/workspace/ResponsePane';
 import { seedDatabase } from './db/seed';
+import { sendRequest } from './lib/http-client';
+import { useRequestStore } from './stores/request-store';
 
 const mockHistory: IHistoryItem[] = [
   {
@@ -40,12 +43,16 @@ export default function App() {
   const [sidebarWidth] = useState(260);
 
   // Request State
+  const { activeRequest } = useRequestStore();
   const [activeReqTab, setActiveReqTab] = useState('Params');
 
   // Response State
+  const [activeResponse, setActiveResponse] = useState<IApiResponse | null>(
+    null,
+  );
   const [responseTab, setResponseTab] = useState('Body');
   const [isSending, setIsSending] = useState(false);
-  const [showResponse, setShowResponse] = useState(true);
+  const [showResponse, setShowResponse] = useState(false);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -63,13 +70,22 @@ export default function App() {
     return () => mediaQuery.removeEventListener('change', handleThemeChange);
   }, [themeMode]);
 
-  const handleSend = () => {
+  const handleSend = async () => {
+    if (!activeRequest) return;
+
     setIsSending(true);
     setShowResponse(false);
-    setTimeout(() => {
-      setIsSending(false);
+    setActiveResponse(null);
+
+    try {
+      const resp = await sendRequest(activeRequest);
+      setActiveResponse(resp);
       setShowResponse(true);
-    }, 800);
+    } catch (error) {
+      console.error('Send failed:', error);
+    } finally {
+      setIsSending(false);
+    }
   };
 
   const copyToClipboard = () => {
@@ -106,6 +122,7 @@ export default function App() {
 
               <ResponsePane
                 showResponse={showResponse}
+                response={activeResponse}
                 responseTab={responseTab}
                 setResponseTab={setResponseTab}
                 copied={copied}

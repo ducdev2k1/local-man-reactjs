@@ -5,8 +5,11 @@ import 'prismjs/themes/prism-tomorrow.css'; // Standard dark theme that works we
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 
+import type { IApiResponse } from '../../Types/models';
+
 interface IProps {
   showResponse: boolean;
+  response: IApiResponse | null;
   responseTab: string;
   setResponseTab: (tab: string) => void;
   copied: boolean;
@@ -15,6 +18,7 @@ interface IProps {
 
 export const ResponsePane: React.FC<IProps> = ({
   showResponse,
+  response,
   responseTab,
   setResponseTab,
   copied,
@@ -29,20 +33,34 @@ export const ResponsePane: React.FC<IProps> = ({
           {/* Status Bar */}
           <div className="flex items-center justify-between border-b border-gray-200/50 px-4 py-2 shrink-0">
             <div className="flex items-center gap-4 text-[12px] font-mono">
-              <span className="flex items-center gap-1.5 font-bold text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-500/10 px-2 py-0.5 rounded-md">
-                <span className="h-1.5 w-1.5 rounded-full bg-green-500 animate-pulse"></span>{' '}
-                200 OK
+              <span
+                className={`flex items-center gap-1.5 font-bold px-2 py-0.5 rounded-md ${
+                  response && response.status >= 200 && response.status < 300
+                    ? 'text-green-600 dark:text-green-400 bg-green-100 dark:bg-green-500/10'
+                    : 'text-red-600 dark:text-red-400 bg-red-100 dark:bg-red-500/10'
+                }`}
+              >
+                <span
+                  className={`h-1.5 w-1.5 rounded-full animate-pulse ${
+                    response && response.status >= 200 && response.status < 300
+                      ? 'bg-green-500'
+                      : 'bg-red-500'
+                  }`}
+                ></span>{' '}
+                {response ? `${response.status} ${response.statusText}` : '---'}
               </span>
               <span className="text-gray-500 dark:text-gray-400 flex items-center gap-1">
                 <Clock size={12} />{' '}
                 <span className="font-semibold text-gray-700 dark:text-gray-300">
-                  124 ms
+                  {response ? `${response.time} ms` : '0 ms'}
                 </span>
               </span>
               <span className="text-gray-500 dark:text-gray-400 flex items-center gap-1">
                 <FileJson size={12} />{' '}
                 <span className="font-semibold text-gray-700 dark:text-gray-300">
-                  2.4 KB
+                  {response
+                    ? `${(response.size / 1024).toFixed(2)} KB`
+                    : '0 KB'}
                 </span>
               </span>
             </div>
@@ -90,29 +108,15 @@ export const ResponsePane: React.FC<IProps> = ({
                     className="language-json"
                     dangerouslySetInnerHTML={{
                       __html: Prism.highlight(
-                        JSON.stringify(
-                          {
-                            status: 'success',
-                            data: [
-                              {
-                                id: 101,
-                                name: 'Mechanical Keyboard',
-                                price: 129.99,
-                                tags: ['tech', 'gaming'],
-                                inStock: true,
-                              },
-                              {
-                                id: 102,
-                                name: 'Wireless Mouse',
-                                price: 49.5,
-                                tags: ['office'],
-                                inStock: false,
-                              },
-                            ],
-                          },
-                          null,
-                          2,
-                        ),
+                        (() => {
+                          if (!response || !response.body) return '';
+                          try {
+                            const parsed = JSON.parse(response.body);
+                            return JSON.stringify(parsed, null, 2);
+                          } catch {
+                            return response.body;
+                          }
+                        })(),
                         Prism.languages.json,
                         'json',
                       ),
@@ -130,25 +134,20 @@ export const ResponsePane: React.FC<IProps> = ({
                   </div>
                   <div className="w-1/2 py-2 px-4">{t('common.value')}</div>
                 </div>
-                {[
-                  ['content-type', 'application/json; charset=utf-8'],
-                  ['cache-control', 'public, max-age=0, must-revalidate'],
-                  ['x-powered-by', 'Express'],
-                  ['date', new Date().toUTCString()],
-                  ['connection', 'keep-alive'],
-                ].map(([k, v], i) => (
-                  <div
-                    key={i}
-                    className="flex border-b border-gray-100 dark:border-gray-800/60 font-mono text-[12px] hover:bg-gray-50 dark:hover:bg-[#181c25]"
-                  >
-                    <div className="w-1/2 py-2 px-4 border-r border-gray-100 dark:border-gray-800/60 text-gray-600 dark:text-gray-400">
-                      {k}
+                {response &&
+                  Object.entries(response.headers).map(([k, v], i) => (
+                    <div
+                      key={i}
+                      className="flex border-b border-gray-100 dark:border-gray-800/60 font-mono text-[12px] hover:bg-gray-50 dark:hover:bg-[#181c25]"
+                    >
+                      <div className="w-1/2 py-2 px-4 border-r border-gray-100 dark:border-gray-800/60 text-gray-600 dark:text-gray-400">
+                        {k}
+                      </div>
+                      <div className="w-1/2 py-2 px-4 text-gray-800 dark:text-gray-300 break-all">
+                        {v}
+                      </div>
                     </div>
-                    <div className="w-1/2 py-2 px-4 text-gray-800 dark:text-gray-300 break-all">
-                      {v}
-                    </div>
-                  </div>
-                ))}
+                  ))}
               </div>
             )}
           </div>

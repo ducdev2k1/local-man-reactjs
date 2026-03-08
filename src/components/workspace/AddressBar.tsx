@@ -9,6 +9,7 @@ import {
 } from 'lucide-react';
 import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { mapCurlToRequest, parseCurl } from '../../lib/curl-parser';
 import { useRequestStore } from '../../stores/request-store';
 import type { TypeHttpMethod } from '../../Types/models';
 import { MethodText } from '../common/MethodText';
@@ -61,6 +62,19 @@ export const AddressBar: React.FC<IProps> = ({ handleSend, isSending }) => {
   const handleWheel = (e: React.WheelEvent) => {
     if (tabsContainerRef.current) {
       tabsContainerRef.current.scrollLeft += e.deltaY;
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const pastedText = e.clipboardData.getData('text');
+    if (pastedText && pastedText.trim().startsWith('curl')) {
+      const parsedRes = parseCurl(pastedText);
+      if (parsedRes) {
+        e.preventDefault();
+        const update = mapCurlToRequest(parsedRes);
+        updateActiveRequest(update);
+        saveRequest();
+      }
     }
   };
 
@@ -183,6 +197,7 @@ export const AddressBar: React.FC<IProps> = ({ handleSend, isSending }) => {
               type="text"
               value={activeRequest.url || ''}
               onChange={handleUrlChange}
+              onPaste={handlePaste}
               onBlur={() => saveRequest()}
               className="flex-1 bg-transparent px-4 py-2 text-[13px] font-mono text-gray-900 dark:text-gray-100 outline-none placeholder-gray-400 w-full"
               placeholder={t('addressBar.urlPlaceholder')}
