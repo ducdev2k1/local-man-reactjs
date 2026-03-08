@@ -3,6 +3,7 @@ import Prism from 'prismjs';
 import 'prismjs/components/prism-json';
 import 'prismjs/themes/prism-tomorrow.css'; // Standard dark theme that works well
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface IProps {
   showResponse: boolean;
@@ -19,6 +20,8 @@ export const ResponsePane: React.FC<IProps> = ({
   copied,
   copyToClipboard,
 }) => {
+  const { t } = useTranslation();
+
   return (
     <div className="flex flex-1 flex-col bg-white dark:bg-[#12151c] min-w-[300px]">
       {showResponse ? (
@@ -53,7 +56,7 @@ export const ResponsePane: React.FC<IProps> = ({
                 ) : (
                   <Copy size={12} />
                 )}
-                {copied ? 'Copied' : 'Copy'}
+                {copied ? t('responsePane.copied') : t('responsePane.copy')}
               </button>
             </div>
           </div>
@@ -123,9 +126,9 @@ export const ResponsePane: React.FC<IProps> = ({
               <div className="flex flex-col min-h-full bg-white dark:bg-[#12151c]">
                 <div className="flex border-b border-gray-200 dark:border-gray-800 text-[11px] font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 dark:bg-[#0d0f14]">
                   <div className="w-1/2 py-2 px-4 border-r border-gray-200 dark:border-gray-800">
-                    Name
+                    {t('common.name')}
                   </div>
-                  <div className="w-1/2 py-2 px-4">Value</div>
+                  <div className="w-1/2 py-2 px-4">{t('common.value')}</div>
                 </div>
                 {[
                   ['content-type', 'application/json; charset=utf-8'],
@@ -158,10 +161,10 @@ export const ResponsePane: React.FC<IProps> = ({
             strokeWidth={1}
           />
           <span className="text-sm font-medium text-gray-500 dark:text-gray-400">
-            Hit Send to get a response
+            {t('responsePane.hitSend')}
           </span>
           <span className="text-[11px] mt-1 opacity-60">
-            or press{' '}
+            {t('responsePane.orPress')}{' '}
             <kbd className="font-sans px-1.5 py-0.5 bg-gray-200 dark:bg-gray-800 rounded">
               Ctrl
             </kbd>{' '}

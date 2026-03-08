@@ -1,5 +1,6 @@
 import { Braces, Lock } from 'lucide-react';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { useRequestStore } from '../../stores/request-store';
 import type { TypeAuthType, TypeBodyType } from '../../Types/models';
 import { KeyValueRow } from '../common/KeyValueRow';
@@ -13,12 +14,13 @@ export const RequestPane: React.FC<IProps> = ({
   activeReqTab,
   setActiveReqTab,
 }) => {
+  const { t } = useTranslation();
   const { activeRequest, updateActiveRequest } = useRequestStore();
 
   if (!activeRequest) {
     return (
       <div className="flex flex-1 items-center justify-center text-gray-400 dark:border-gray-800 min-w-[300px] border-r border-gray-200">
-        No active request selected
+        {t('requestPane.noActive')}
       </div>
     );
   }
@@ -72,12 +74,12 @@ export const RequestPane: React.FC<IProps> = ({
             <div className="flex border-b border-gray-200 dark:border-gray-800 text-[11px] font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 dark:bg-[#0d0f14]">
               <div className="w-8"></div>
               <div className="w-1/3 py-2 px-3 border-r border-gray-200 dark:border-gray-800">
-                Key
+                {t('common.key')}
               </div>
               <div className="w-1/3 py-2 px-3 border-r border-gray-200 dark:border-gray-800">
-                Value
+                {t('common.value')}
               </div>
-              <div className="flex-1 py-2 px-3">Description</div>
+              <div className="flex-1 py-2 px-3">{t('common.description')}</div>
             </div>
             {activeRequest.params.map((p) => (
               <KeyValueRow
@@ -97,12 +99,12 @@ export const RequestPane: React.FC<IProps> = ({
             <div className="flex border-b border-gray-200 dark:border-gray-800 text-[11px] font-semibold text-gray-500 uppercase tracking-wider bg-gray-50 dark:bg-[#0d0f14]">
               <div className="w-8"></div>
               <div className="w-1/3 py-2 px-3 border-r border-gray-200 dark:border-gray-800">
-                Key
+                {t('common.key')}
               </div>
               <div className="w-1/3 py-2 px-3 border-r border-gray-200 dark:border-gray-800">
-                Value
+                {t('common.value')}
               </div>
-              <div className="flex-1 py-2 px-3">Description</div>
+              <div className="flex-1 py-2 px-3">{t('common.description')}</div>
             </div>
             {activeRequest.headers.map((h) => (
               <KeyValueRow
@@ -155,7 +157,7 @@ export const RequestPane: React.FC<IProps> = ({
             ) : (
               <div className="flex flex-1 items-center justify-center text-gray-400 flex-col gap-2">
                 <Braces size={24} className="opacity-20" />
-                <span>This body type is not implemented in mock</span>
+                <span>{t('requestPane.bodyNotImpl')}</span>
               </div>
             )}
           </div>
@@ -165,7 +167,7 @@ export const RequestPane: React.FC<IProps> = ({
           <div className="flex h-full bg-white dark:bg-[#12151c]">
             <div className="w-48 border-r border-gray-100 dark:border-gray-800/80 p-2">
               <div className="text-[10px] font-semibold text-gray-400 uppercase tracking-wider mb-2 px-2">
-                Type
+                {t('requestPane.type')}
               </div>
               <div className="flex flex-col gap-0.5">
                 {[
@@ -190,7 +192,7 @@ export const RequestPane: React.FC<IProps> = ({
                 <div className="max-w-md space-y-4">
                   <div>
                     <label className="block text-[12px] font-medium text-gray-700 dark:text-gray-300 mb-1.5">
-                      Token
+                      {t('requestPane.token')}
                     </label>
                     <div className="relative">
                       <Lock

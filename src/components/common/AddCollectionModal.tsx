@@ -1,11 +1,22 @@
 /**
  * Component Name: AddCollectionModal
- * Description: Modal để tạo mới Collection với tên và mô tả
+ * Description: Modal sử dụng shadcn Dialog để tạo mới Collection
  * SCSS File: src/assets/scss/components/_c-add-collection-modal.scss
  */
 
-import { FolderPlus, X } from 'lucide-react';
+import { FolderPlus } from 'lucide-react';
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Button } from '../ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '../ui/dialog';
+import { Input, Label } from '../ui/input';
 
 interface IProps {
   isOpen: boolean;
@@ -18,112 +29,93 @@ export const AddCollectionModal: React.FC<IProps> = ({
   onClose,
   onSubmit,
 }) => {
+  const { t } = useTranslation();
   // State
   const [name, setName] = useState('');
   const [description, setDescription] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Methods
+  const resetForm = () => {
+    setName('');
+    setDescription('');
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (name.trim()) {
       onSubmit(name.trim(), description.trim() || undefined);
-      setName('');
-      setDescription('');
+      resetForm();
       onClose();
     }
   };
 
-  const handleOverlayKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Escape') {
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      resetForm();
       onClose();
     }
   };
 
-  // Lifecycle Hooks
+  // Lifecycle Hooks — chỉ tương tác với DOM (focus input)
   useEffect(() => {
     if (isOpen) {
-      // Focus vào input khi mở modal
       setTimeout(() => inputRef.current?.focus(), 100);
-    } else {
-      setName('');
-      setDescription('');
     }
   }, [isOpen]);
 
-  if (!isOpen) return null;
-
   return (
-    <div
-      className="c-modal_overlay"
-      onClick={onClose}
-      onKeyDown={handleOverlayKeyDown}
-      role="dialog"
-      aria-modal="true"
-      tabIndex={-1}
-    >
-      <div className="c-modal_content" onClick={(e) => e.stopPropagation()}>
-        <div className="c-modal_header">
-          <div className="c-modal_header_title">
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
             <FolderPlus size={18} className="text-[#4f8ef7]" />
-            <h3>New Collection</h3>
-          </div>
-          <button onClick={onClose} className="c-modal_close">
-            <X size={16} />
-          </button>
-        </div>
+            {t('addCollection.title')}
+          </DialogTitle>
+          <DialogDescription>
+            {t('addCollection.description')}
+          </DialogDescription>
+        </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="c-modal_body">
-          <div className="c-modal_field">
-            <label htmlFor="collection-name" className="c-modal_label">
-              Name <span className="text-red-400">*</span>
-            </label>
-            <input
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="collection-name">
+              {t('addCollection.name')} <span className="text-red-400">*</span>
+            </Label>
+            <Input
               ref={inputRef}
               id="collection-name"
-              type="text"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              placeholder="My API Collection"
-              className="c-modal_input"
+              placeholder={t('addCollection.namePlaceholder')}
               autoComplete="off"
             />
           </div>
 
-          <div className="c-modal_field">
-            <label htmlFor="collection-desc" className="c-modal_label">
-              Description
-            </label>
-            <input
+          <div className="space-y-2">
+            <Label htmlFor="collection-desc">
+              {t('addCollection.descriptionLabel')}
+            </Label>
+            <Input
               id="collection-desc"
-              type="text"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              placeholder="Optional description..."
-              className="c-modal_input"
+              placeholder={t('addCollection.descPlaceholder')}
               autoComplete="off"
             />
           </div>
 
-          <div className="c-modal_footer">
-            <button
-              type="button"
-              onClick={onClose}
-              className="c-modal_btn-cancel"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              disabled={!name.trim()}
-              className="c-modal_btn-submit"
-            >
+          <DialogFooter>
+            <Button type="button" variant="outline" size="sm" onClick={onClose}>
+              {t('common.cancel')}
+            </Button>
+            <Button type="submit" size="sm" disabled={!name.trim()}>
               <FolderPlus size={14} />
-              Create
-            </button>
-          </div>
+              {t('addCollection.create')}
+            </Button>
+          </DialogFooter>
         </form>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 };

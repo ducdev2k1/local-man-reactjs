@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { IApiRequest } from '../Types/models';
+import { db } from '../db/database';
 import { requestService } from '../db/services/request-service';
 
 interface TabInfo {
@@ -19,6 +20,7 @@ interface RequestStore {
 
   // Actions
   openRequest: (request: IApiRequest) => Promise<void>;
+  createNewRequest: (collectionId?: string) => Promise<void>;
   closeTab: (id: string) => void;
   updateActiveRequest: (partial: Partial<IApiRequest>) => void;
   saveRequest: () => Promise<void>;
@@ -32,7 +34,6 @@ export const useRequestStore = create<RequestStore>((set, get) => ({
 
   openRequest: async (request: IApiRequest) => {
     const { openTabs } = get();
-    // Check if implicitly open
     const exists = openTabs.find((t) => t.id === request.id);
     if (!exists) {
       set({
@@ -43,12 +44,49 @@ export const useRequestStore = create<RequestStore>((set, get) => ({
       });
     }
 
-    // Set as active
     set({
       activeTabId: request.id,
-      activeRequest: request, // Simple clone or use immutable state in actual complex scenarios
+      activeRequest: request,
       isDirty: false,
     });
+  },
+
+  createNewRequest: async (collectionId?: string) => {
+    // Lấy collection đầu tiên nếu không truyền collectionId
+    let targetCollectionId = collectionId;
+    if (!targetCollectionId) {
+      const firstCollection = await db.collections
+        .orderBy('sort_order')
+        .first();
+      targetCollectionId = firstCollection?.id || '';
+    }
+
+    // Tạo request mới trong DB
+    const newId = await requestService.create({
+      collection_id: targetCollectionId,
+      name: 'New Request',
+      url: '',
+    });
+
+    // Lấy request vừa tạo từ DB
+    const newRequest = await requestService.getById(newId);
+    if (newRequest) {
+      // Mở tab mới
+      const { openTabs } = get();
+      set({
+        openTabs: [
+          ...openTabs,
+          {
+            id: newRequest.id,
+            name: newRequest.name,
+            method: newRequest.method,
+          },
+        ],
+        activeTabId: newRequest.id,
+        activeRequest: newRequest,
+        isDirty: false,
+      });
+    }
   },
 
   closeTab: (id: string) => {

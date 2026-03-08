@@ -18,6 +18,7 @@ import {
   X,
 } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { db } from '../../db/database';
 import { collectionService } from '../../db/services/collection-service';
 import { useRequestStore } from '../../stores/request-store';
@@ -25,6 +26,8 @@ import type { IHistoryItem } from '../../Types';
 import { AddCollectionModal } from '../common/AddCollectionModal';
 import { MethodBadge } from '../common/MethodBadge';
 import { MethodText } from '../common/MethodText';
+import { Button } from '../ui/button';
+import { Input } from '../ui/input';
 
 interface IProps {
   activeSidebarTab: string;
@@ -39,6 +42,7 @@ export const Sidebar: React.FC<IProps> = ({
   mockHistory,
   sidebarWidth,
 }) => {
+  const { t } = useTranslation();
   const openRequest = useRequestStore((state) => state.openRequest);
 
   // State: Modal & Search
@@ -99,9 +103,9 @@ export const Sidebar: React.FC<IProps> = ({
   };
 
   const sidebarTabs = [
-    { id: 'collections', icon: Folder, tooltip: 'Collections' },
-    { id: 'environments', icon: Globe, tooltip: 'Environments' },
-    { id: 'history', icon: Clock, tooltip: 'History' },
+    { id: 'collections', icon: Folder, tooltip: t('sidebar.collections') },
+    { id: 'environments', icon: Globe, tooltip: t('sidebar.environments') },
+    { id: 'history', icon: Clock, tooltip: t('sidebar.history') },
   ];
 
   return (
@@ -139,42 +143,48 @@ export const Sidebar: React.FC<IProps> = ({
           <>
             <div className="flex items-center justify-between p-3">
               <span className="font-semibold text-gray-800 dark:text-gray-200 text-xs uppercase tracking-wider">
-                Collections
+                {t('sidebar.collections')}
               </span>
               <div className="flex gap-1">
-                <button
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={() => setIsModalOpen(true)}
-                  className="p-1.5 rounded-md text-gray-500 hover:bg-gray-200/80 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-[#181c25] dark:hover:text-white transition-colors"
-                  title="Add Collection"
+                  className="h-7 w-7 text-gray-500 dark:text-gray-400"
+                  title={t('sidebar.addCollection')}
                 >
                   <Plus size={14} />
-                </button>
-                <button
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
                   onClick={handleToggleSearch}
-                  className={`p-1.5 rounded-md transition-colors ${showSearch ? 'text-[#4f8ef7] bg-[#4f8ef7]/10' : 'text-gray-500 hover:bg-gray-200/80 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-[#181c25] dark:hover:text-white'}`}
-                  title="Search Collections"
+                  className={`h-7 w-7 ${showSearch ? 'text-[#4f8ef7] bg-[#4f8ef7]/10' : 'text-gray-500 dark:text-gray-400'}`}
+                  title={t('sidebar.searchCollections')}
                 >
                   <Search size={14} />
-                </button>
+                </Button>
               </div>
             </div>
 
             {showSearch && (
-              <div className="c-sidebar-search_wrapper">
-                <div className="c-sidebar-search_input-group">
-                  <Search size={13} className="c-sidebar-search_icon" />
-                  <input
-                    type="text"
+              <div className="px-3 pb-2">
+                <div className="relative flex items-center">
+                  <Search
+                    size={13}
+                    className="absolute left-2.5 text-gray-400 dark:text-gray-500 pointer-events-none"
+                  />
+                  <Input
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    placeholder="Search collections..."
-                    className="c-sidebar-search_input"
+                    placeholder={t('sidebar.searchPlaceholder')}
+                    className="pl-8 pr-8 h-8 text-xs"
                     autoFocus
                   />
                   {searchQuery && (
                     <button
                       onClick={() => setSearchQuery('')}
-                      className="c-sidebar-search_clear"
+                      className="absolute right-1.5 p-0.5 rounded text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300"
                     >
                       <X size={12} />
                     </button>
@@ -245,7 +255,7 @@ export const Sidebar: React.FC<IProps> = ({
               {searchQuery && filteredCollections?.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-8 text-gray-400 dark:text-gray-500">
                   <Search size={24} className="mb-2 opacity-30" />
-                  <span className="text-xs">No results found</span>
+                  <span className="text-xs">{t('sidebar.noResults')}</span>
                 </div>
               )}
             </div>
@@ -256,7 +266,7 @@ export const Sidebar: React.FC<IProps> = ({
           <>
             <div className="p-3 border-b border-gray-200 dark:border-gray-800">
               <span className="font-semibold text-gray-800 dark:text-gray-200 text-xs uppercase tracking-wider">
-                History
+                {t('sidebar.history')}
               </span>
             </div>
             <div className="flex-1 overflow-y-auto">

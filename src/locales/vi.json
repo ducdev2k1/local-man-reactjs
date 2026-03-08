@@ -1,0 +1,64 @@
+{
+  "addCollection": {
+    "create": "Tạo mới",
+    "descPlaceholder": "Mô tả không bắt buộc...",
+    "description": "Tạo một bộ sưu tập mới để sắp xếp các yêu cầu API của bạn.",
+    "descriptionLabel": "Mô tả",
+    "name": "Tên",
+    "namePlaceholder": "Bộ sưu tập API của tôi",
+    "title": "Bộ sưu tập mới"
+  },
+  "addressBar": {
+    "closeTab": "Đóng tab",
+    "newRequest": "Yêu cầu mới",
+    "selectRequest": "Chọn hoặc tạo một yêu cầu mới...",
+    "send": "Gửi",
+    "urlPlaceholder": "Nhập URL API..."
+  },
+  "common": {
+    "cancel": "Hủy",
+    "copied": "Đã sao chép",
+    "copy": "Sao chép",
+    "description": "Mô tả",
+    "key": "Khóa",
+    "name": "Tên",
+    "value": "Giá trị"
+  },
+  "footer": {
+    "dbConnected": "IndexedDB: Đã kết nối",
+    "offlineReady": "Sẵn sàng chế độ ngoại tuyến",
+    "version": "Localman v1.0.0",
+    "workspace": "Không gian làm việc: Cá nhân"
+  },
+  "header": {
+    "requests": "Yêu cầu",
+    "runner": "Trình chạy",
+    "synced": "Đã đồng bộ",
+    "themeDark": "Tối",
+    "themeLight": "Sáng",
+    "themeSystem": "Hệ thống"
+  },
+  "keyValueRow": {
+    "newKey": "Khóa mới"
+  },
+  "requestPane": {
+    "bodyNotImpl": "Loại body này chưa được triển khai trong bản mock",
+    "noActive": "Không có yêu cầu nào được chọn",
+    "token": "Token",
+    "type": "Loại"
+  },
+  "responsePane": {
+    "hitSend": "Nhấn Gửi để nhận phản hồi",
+    "orPress": "hoặc nhấn",
+    "status": "Trạng thái"
+  },
+  "sidebar": {
+    "addCollection": "Thêm bộ sưu tập",
+    "collections": "Bộ sưu tập",
+    "environments": "Môi trường",
+    "history": "Lịch sử",
+    "noResults": "Không tìm thấy kết quả",
+    "searchCollections": "Tìm kiếm bộ sưu tập",
+    "searchPlaceholder": "Tìm kiếm bộ sưu tập..."
+  }
+}

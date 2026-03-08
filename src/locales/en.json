@@ -1,0 +1,64 @@
+{
+  "addCollection": {
+    "create": "Create",
+    "descPlaceholder": "Optional description...",
+    "description": "Create a new collection to organize your API requests.",
+    "descriptionLabel": "Description",
+    "name": "Name",
+    "namePlaceholder": "My API Collection",
+    "title": "New Collection"
+  },
+  "addressBar": {
+    "closeTab": "Close Tab",
+    "newRequest": "New Request",
+    "selectRequest": "Select or create a new request...",
+    "send": "Send",
+    "urlPlaceholder": "Enter API URL..."
+  },
+  "common": {
+    "cancel": "Cancel",
+    "copied": "Copied",
+    "copy": "Copy",
+    "description": "Description",
+    "key": "Key",
+    "name": "Name",
+    "value": "Value"
+  },
+  "footer": {
+    "dbConnected": "IndexedDB: Connected",
+    "offlineReady": "Offline Mode Ready",
+    "version": "Localman v1.0.0",
+    "workspace": "Workspace: Personal"
+  },
+  "header": {
+    "requests": "Requests",
+    "runner": "Runner",
+    "synced": "Synced",
+    "themeDark": "Dark",
+    "themeLight": "Light",
+    "themeSystem": "System"
+  },
+  "keyValueRow": {
+    "newKey": "New key"
+  },
+  "requestPane": {
+    "bodyNotImpl": "This body type is not implemented in mock",
+    "noActive": "No active request selected",
+    "token": "Token",
+    "type": "Type"
+  },
+  "responsePane": {
+    "hitSend": "Hit Send to get a response",
+    "orPress": "or press",
+    "status": "Status"
+  },
+  "sidebar": {
+    "addCollection": "Add Collection",
+    "collections": "Collections",
+    "environments": "Environments",
+    "history": "History",
+    "noResults": "No results found",
+    "searchCollections": "Search Collections",
+    "searchPlaceholder": "Search collections..."
+  }
+}
