@@ -1,5 +1,5 @@
-import { Database, Layout } from "lucide-react";
-import React from "react";
+import { Database, Layout } from 'lucide-react';
+import React from 'react';
 
 export const Footer: React.FC = () => {
   return (

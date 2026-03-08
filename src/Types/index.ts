@@ -1,10 +1,10 @@
 // Defines the shared interfaces and types for LocalMan
 
-export type TypeHttpMethod = "GET" | "POST" | "PUT" | "DELETE" | "PATCH";
+export type TypeHttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 
 export interface IRequestItem {
   id: string;
-  type: "request";
+  type: 'request';
   method: TypeHttpMethod;
   name: string;
 }

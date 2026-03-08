@@ -1,5 +1,5 @@
-import { Cloud, Monitor, Moon, Settings, Sun, Zap } from "lucide-react";
-import React from "react";
+import { Cloud, Monitor, Moon, Settings, Sun, Zap } from 'lucide-react';
+import React from 'react';
 
 interface IProps {
   themeMode: string;
@@ -8,7 +8,7 @@ interface IProps {
 
 export const Header: React.FC<IProps> = ({ themeMode, setThemeMode }) => {
   return (
-    <header className="flex h-12 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-4 dark:border-gray-800 dark:bg-[#0d0f14] z-10">
+    <header className="flex relative h-12 shrink-0 items-center justify-between border-b border-gray-200 bg-white px-4 dark:border-gray-800 dark:bg-[#0d0f14] z-10">
       <div className="flex items-center gap-3">
         <div className="flex items-center justify-center w-7 h-7 rounded-lg bg-gradient-to-tr from-[#4f8ef7] to-[#82b4ff] shadow-sm shadow-blue-500/20">
           <Zap size={14} className="text-white" fill="currentColor" />
@@ -38,9 +38,9 @@ export const Header: React.FC<IProps> = ({ themeMode, setThemeMode }) => {
         <div className="flex items-center gap-1">
           <div className="relative group">
             <button className="flex h-8 w-8 items-center justify-center rounded-md hover:bg-gray-100 dark:hover:bg-[#181c25] text-gray-500 dark:text-gray-400 transition-colors">
-              {themeMode === "light" ? (
+              {themeMode === 'light' ? (
                 <Sun size={15} />
-              ) : themeMode === "dark" ? (
+              ) : themeMode === 'dark' ? (
                 <Moon size={15} />
               ) : (
                 <Monitor size={15} />
@@ -48,20 +48,20 @@ export const Header: React.FC<IProps> = ({ themeMode, setThemeMode }) => {
             </button>
             <div className="absolute right-0 top-full z-20 hidden mt-1 w-36 rounded-xl border border-gray-200/80 bg-white/90 backdrop-blur p-1.5 shadow-xl group-hover:block dark:border-gray-800 dark:bg-[#181c25]/95">
               <button
-                onClick={() => setThemeMode("light")}
-                className={`flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs hover:bg-gray-100 dark:hover:bg-gray-800/50 ${themeMode === "light" ? "text-[#4f8ef7] font-medium" : "text-gray-600 dark:text-gray-300"}`}
+                onClick={() => setThemeMode('light')}
+                className={`flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs hover:bg-gray-100 dark:hover:bg-gray-800/50 ${themeMode === 'light' ? 'text-[#4f8ef7] font-medium' : 'text-gray-600 dark:text-gray-300'}`}
               >
                 <Sun size={14} /> Sáng
               </button>
               <button
-                onClick={() => setThemeMode("dark")}
-                className={`flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs hover:bg-gray-100 dark:hover:bg-gray-800/50 ${themeMode === "dark" ? "text-[#4f8ef7] font-medium" : "text-gray-600 dark:text-gray-300"}`}
+                onClick={() => setThemeMode('dark')}
+                className={`flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs hover:bg-gray-100 dark:hover:bg-gray-800/50 ${themeMode === 'dark' ? 'text-[#4f8ef7] font-medium' : 'text-gray-600 dark:text-gray-300'}`}
               >
                 <Moon size={14} /> Tối
               </button>
               <button
-                onClick={() => setThemeMode("system")}
-                className={`flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs hover:bg-gray-100 dark:hover:bg-gray-800/50 ${themeMode === "system" ? "text-[#4f8ef7] font-medium" : "text-gray-600 dark:text-gray-300"}`}
+                onClick={() => setThemeMode('system')}
+                className={`flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-xs hover:bg-gray-100 dark:hover:bg-gray-800/50 ${themeMode === 'system' ? 'text-[#4f8ef7] font-medium' : 'text-gray-600 dark:text-gray-300'}`}
               >
                 <Monitor size={14} /> Hệ thống
               </button>

@@ -1,5 +1,5 @@
-import { Trash2 } from "lucide-react";
-import React from "react";
+import { Trash2 } from 'lucide-react';
+import React from 'react';
 
 interface IProps {
   isNew?: boolean;
@@ -10,9 +10,9 @@ interface IProps {
 
 export const KeyValueRow: React.FC<IProps> = ({
   isNew,
-  defaultKey = "",
-  defaultVal = "",
-  defaultDesc = "",
+  defaultKey = '',
+  defaultVal = '',
+  defaultDesc = '',
 }) => (
   <div className="flex group items-center border-b border-gray-100 dark:border-gray-800/60 hover:bg-gray-50/50 dark:hover:bg-[#181c25]/50 transition-colors">
     <div className="w-8 flex justify-center py-2">
@@ -27,23 +27,23 @@ export const KeyValueRow: React.FC<IProps> = ({
     <div className="w-1/3 border-r border-gray-100 dark:border-gray-800/60">
       <input
         type="text"
-        placeholder={isNew ? "New key" : "Key"}
+        placeholder={isNew ? 'New key' : 'Key'}
         defaultValue={defaultKey}
-        className={`w-full bg-transparent px-3 py-1.5 outline-none font-mono text-xs focus:bg-white dark:focus:bg-[#12151c] ${isNew ? "text-gray-400" : "text-gray-800 dark:text-gray-200"}`}
+        className={`w-full bg-transparent px-3 py-1.5 outline-none font-mono text-xs focus:bg-white dark:focus:bg-[#12151c] ${isNew ? 'text-gray-400' : 'text-gray-800 dark:text-gray-200'}`}
       />
     </div>
     <div className="w-1/3 border-r border-gray-100 dark:border-gray-800/60">
       <input
         type="text"
-        placeholder={isNew ? "Value" : "Value"}
+        placeholder={isNew ? 'Value' : 'Value'}
         defaultValue={defaultVal}
-        className={`w-full bg-transparent px-3 py-1.5 outline-none font-mono text-xs focus:bg-white dark:focus:bg-[#12151c] ${isNew ? "text-gray-400" : "text-gray-800 dark:text-gray-200"}`}
+        className={`w-full bg-transparent px-3 py-1.5 outline-none font-mono text-xs focus:bg-white dark:focus:bg-[#12151c] ${isNew ? 'text-gray-400' : 'text-gray-800 dark:text-gray-200'}`}
       />
     </div>
     <div className="flex-1 flex items-center justify-between">
       <input
         type="text"
-        placeholder={isNew ? "Description" : "Description"}
+        placeholder={isNew ? 'Description' : 'Description'}
         defaultValue={defaultDesc}
         className="w-full bg-transparent px-3 py-1.5 outline-none text-xs text-gray-500 focus:bg-white dark:focus:bg-[#12151c]"
       />
