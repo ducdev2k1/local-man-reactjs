@@ -10,6 +10,8 @@
   },
   "addressBar": {
     "closeTab": "Close Tab",
+    "layoutHorizontal": "Switch to Horizontal Layout",
+    "layoutVertical": "Switch to Vertical Layout",
     "newRequest": "New Request",
     "selectRequest": "Select or create a new request...",
     "send": "Send",
@@ -19,6 +21,7 @@
     "addFolder": "Add Folder",
     "addRequest": "Add Request",
     "cancel": "Cancel",
+    "confirm": "Confirm",
     "confirmDeleteCollection": "Are you sure you want to delete this collection and all requests inside?",
     "confirmDeleteRequest": "Are you sure you want to delete this request?",
     "copied": "Copied",
@@ -30,6 +33,15 @@
     "name": "Name",
     "rename": "Rename",
     "value": "Value"
+  },
+  "environments": {
+    "add": "Add Environment",
+    "edit": "Edit",
+    "empty": "No environments",
+    "makeActive": "Set active",
+    "name": "Environment Name",
+    "rename": "Rename Environment",
+    "variables": "Variables"
   },
   "footer": {
     "dbConnected": "IndexedDB: Connected",
@@ -64,6 +76,7 @@
   "sidebar": {
     "addCollection": "Add Collection",
     "collections": "Collections",
+    "deleteCollection": "Delete Collection",
     "deleteRequest": "Delete Request",
     "environments": "Environments",
     "history": "History",

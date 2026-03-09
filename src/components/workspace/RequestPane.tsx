@@ -41,7 +41,7 @@ export const RequestPane: React.FC<IProps> = ({
   const authType = activeRequest.auth.type || 'No Auth';
 
   return (
-    <div className="flex flex-1 flex-col border-r border-gray-200/50 min-w-[300px] transition-all">
+    <div className="flex flex-1 flex-col min-w-[300px] border-r border-gray-200 dark:border-gray-800 transition-all bg-white dark:bg-[#0B0E14]">
       {/* Tabs */}
       <div className="flex gap-1 border-b border-gray-200/50 px-3 pt-2 overflow-x-auto hide-scrollbar">
         {['Params', 'Headers', 'Body', 'Auth', 'Scripts'].map((tab) => (

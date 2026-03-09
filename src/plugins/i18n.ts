@@ -3,13 +3,15 @@ import { initReactI18next } from 'react-i18next';
 import en from '../locales/en.json';
 import vi from '../locales/vi.json';
 
+const savedLanguage = localStorage.getItem('language') || 'vi';
+
 i18n.use(initReactI18next).init({
   resources: {
     en: { translation: en },
     vi: { translation: vi },
   },
-  lng: 'en', // Ngôn ngữ mặc định là tiếng Việt
-  fallbackLng: 'en',
+  lng: savedLanguage, // Ngôn ngữ mặc định
+  fallbackLng: 'vi',
   interpolation: {
     escapeValue: false, // React đã tự escape để chống XSS
   },

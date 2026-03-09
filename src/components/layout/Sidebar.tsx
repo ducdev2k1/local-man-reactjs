@@ -11,29 +11,31 @@ import { useTranslation } from 'react-i18next';
 import { db } from '../../db/database';
 import { collectionService } from '../../db/services/collection-service';
 import { requestService } from '../../db/services/request-service';
+import { historyService } from '../../db/services/history-service';
+import { environmentService } from '../../db/services/environment-service';
 import { useRequestStore } from '../../stores/request-store';
-import type { IHistoryItem } from '../../Types';
+import type { IEnvironment } from '../../Types/models';
 import { AddCollectionModal } from '../common/AddCollectionModal';
+import { AddEnvironmentModal } from '../common/AddEnvironmentModal';
 import { ConfirmModal } from '../common/ConfirmModal';
 import { Button } from '../ui/button';
 import { Input } from '../ui/input';
 
 // Sub-components
 import { SidebarCollections } from './SidebarCollections';
+import { SidebarEnvironments } from './SidebarEnvironments';
 import { SidebarHistory } from './SidebarHistory';
 import { SidebarNav } from './SidebarNav';
 
 interface IProps {
   activeSidebarTab: string;
   setActiveSidebarTab: (tab: string) => void;
-  mockHistory: IHistoryItem[];
   sidebarWidth: number;
 }
 
 export const Sidebar: React.FC<IProps> = ({
   activeSidebarTab,
   setActiveSidebarTab,
-  mockHistory,
   sidebarWidth,
 }) => {
   const { t } = useTranslation();
@@ -49,6 +51,9 @@ export const Sidebar: React.FC<IProps> = ({
   const [showSearch, setShowSearch] = useState(false);
   const [renamingId, setRenamingId] = useState<string | null>(null);
   const [renameValue, setRenameValue] = useState('');
+  
+  const [isEnvModalOpen, setIsEnvModalOpen] = useState(false);
+  const [envToEdit, setEnvToEdit] = useState<IEnvironment | undefined>(undefined);
 
   const [confirmModal, setConfirmModal] = useState<{
     isOpen: boolean;
@@ -58,6 +63,8 @@ export const Sidebar: React.FC<IProps> = ({
   }>({ isOpen: false, title: '', message: '', onConfirm: () => {} });
 
   // DB Queries
+  const historyEntries = useLiveQuery(() => historyService.getAll(), [], []);
+  const environments = useLiveQuery(() => environmentService.getAll(), [], []);
   const collections = useLiveQuery(
     () => db.collections.orderBy('sort_order').toArray(),
     [],
@@ -142,7 +149,7 @@ export const Sidebar: React.FC<IProps> = ({
 
       <aside
         style={{ width: sidebarWidth }}
-        className="c-sidebar u-glass-sidebar border-none"
+        className="c-sidebar bg-gray-50 dark:bg-[#181c25] border-r border-gray-200 dark:border-gray-800 shrink-0 flex flex-col overflow-hidden"
       >
         {activeSidebarTab === 'collections' && (
           <>
@@ -229,10 +236,47 @@ export const Sidebar: React.FC<IProps> = ({
           </>
         )}
 
+        {activeSidebarTab === 'environments' && (
+          <SidebarEnvironments
+            environments={environments}
+            onAddEnvironment={() => {
+              setEnvToEdit(undefined);
+              setIsEnvModalOpen(true);
+            }}
+            onEditEnvironment={(env) => {
+              setEnvToEdit(env);
+              setIsEnvModalOpen(true);
+            }}
+            onDeleteEnvironment={(env) => {
+              setConfirmModal({
+                isOpen: true,
+                title: t('common.delete'),
+                message: t('common.confirmDelete', 'Are you sure you want to delete this environment?'),
+                onConfirm: async () => {
+                  await environmentService.delete(env.id);
+                },
+              });
+            }}
+          />
+        )}
+
         {activeSidebarTab === 'history' && (
-          <SidebarHistory history={mockHistory} />
+          <SidebarHistory history={historyEntries} />
         )}
       </aside>
+
+      <AddEnvironmentModal
+        isOpen={isEnvModalOpen}
+        onClose={() => setIsEnvModalOpen(false)}
+        env={envToEdit}
+        onSubmit={async (name, variables) => {
+          if (envToEdit) {
+            await environmentService.update(envToEdit.id, { name, variables });
+          } else {
+            await environmentService.create({ name, variables, is_active: false });
+          }
+        }}
+      />
 
       <AddCollectionModal
         isOpen={isModalOpen}

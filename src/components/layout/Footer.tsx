@@ -6,7 +6,7 @@ export const Footer: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <footer className="flex h-7 shrink-0 items-center justify-between border-t border-gray-200/50 u-glass px-3 text-[11px] text-gray-500 dark:text-gray-400 z-10 !bg-white/5 dark:!bg-black/10">
+    <footer className="bg-white dark:bg-[#0B0E14] border-t border-gray-200 dark:border-gray-800 h-8 flex items-center justify-between px-4 text-xs text-slate-600 dark:text-slate-400 shrink-0 z-10">
       <div className="flex items-center gap-4">
         <div className="flex items-center gap-1.5 hover:text-gray-800 dark:hover:text-gray-200 cursor-pointer transition-colors">
           <Database size={12} className="text-green-500" />

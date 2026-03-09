@@ -21,6 +21,13 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from '../ui/context-menu';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
 import { Input } from '../ui/input';
 
 interface IProps {
@@ -81,7 +88,7 @@ export const SidebarCollections: React.FC<IProps> = ({
                   onClick={(e) =>
                     onToggleCollection(e, col.id, col.isOpen || false)
                   }
-                  className="c-sidebar_item u-glass-card !rounded-xl mb-1"
+                  className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-200 dark:border-gray-800/80 bg-gray-50 dark:bg-[#1e2330]/50 py-2 px-3 hover:bg-gray-100 dark:hover:bg-[#1e2330] transition-colors mb-2 shadow-sm"
                 >
                   {col.isOpen ? (
                     <ChevronDown
@@ -112,7 +119,7 @@ export const SidebarCollections: React.FC<IProps> = ({
                       onClick={(e) => e.stopPropagation()}
                     />
                   ) : (
-                    <span className="truncate text-xs font-medium">
+                    <span className="truncate text-xs font-medium text-slate-800 dark:text-slate-200">
                       {col.name}
                     </span>
                   )}
@@ -146,14 +153,16 @@ export const SidebarCollections: React.FC<IProps> = ({
             </ContextMenu>
 
             {col.isOpen && (
-              <div className="ml-5 mt-0.5 mb-1.5 space-y-0.5 border-l border-gray-200/50 dark:border-gray-800/50">
+              <div className="ml-4 mt-1 mb-3">
                 {colRequests.map((item) => (
                   <ContextMenu key={item.id}>
                     <ContextMenuTrigger>
                       <div
                         onClick={() => onOpenRequest(item)}
-                        className={`group flex cursor-pointer items-center justify-between rounded-xl py-2 pl-3 pr-2 transition-all u-glass-card mb-1 mx-1 ${
-                          activeTabId === item.id ? 'active' : ''
+                        className={`group flex cursor-pointer items-center justify-between rounded-lg border border-gray-200 dark:border-gray-800/80 bg-white dark:bg-[#131720] py-1.5 pl-3 pr-2 transition-colors mb-1.5 hover:bg-gray-50 dark:hover:bg-[#1e2330] shadow-sm ${
+                          activeTabId === item.id
+                            ? 'border-[#4f8ef7]/50 dark:border-[#4f8ef7]/50 bg-blue-50/50 dark:bg-[#1a2332] text-blue-700 dark:text-blue-400 font-medium'
+                            : 'text-gray-700 dark:text-gray-300'
                         }`}
                       >
                         <div className="flex items-center gap-2 overflow-hidden w-full">
@@ -179,10 +188,48 @@ export const SidebarCollections: React.FC<IProps> = ({
                           )}
                         </div>
                         {!renamingId && (
-                          <MoreVertical
-                            size={14}
-                            className="opacity-0 text-gray-400 dark:text-gray-500 group-hover:opacity-100 transition-opacity"
-                          />
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <div
+                                role="button"
+                                className="opacity-0 text-gray-400 dark:text-gray-500 group-hover:opacity-100 transition-opacity p-0.5 hover:bg-gray-200 dark:hover:bg-gray-700/50 rounded"
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <MoreVertical size={14} />
+                              </div>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end" className="w-40">
+                              <DropdownMenuItem
+                                className="gap-2 cursor-pointer"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onRenameRequest(item);
+                                }}
+                              >
+                                <Edit2 size={14} /> {t('common.rename')}
+                              </DropdownMenuItem>
+                              <DropdownMenuItem
+                                className="gap-2 cursor-pointer"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onDuplicateRequest(item.id);
+                                }}
+                              >
+                                <Copy size={14} /> {t('common.duplicate')}
+                              </DropdownMenuItem>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuItem
+                                className="gap-2 text-red-500 focus:text-red-500 cursor-pointer"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onDeleteRequest(item.id);
+                                }}
+                              >
+                                <Trash2 size={14} />{' '}
+                                {t('sidebar.deleteRequest')}
+                              </DropdownMenuItem>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         )}
                       </div>
                     </ContextMenuTrigger>

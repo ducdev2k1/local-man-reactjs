@@ -27,7 +27,7 @@ export const ResponsePane: React.FC<IProps> = ({
   const { t } = useTranslation();
 
   return (
-    <div className="flex flex-1 flex-col min-w-[300px] transition-all">
+    <div className="flex flex-1 flex-col min-w-[300px] transition-all bg-white dark:bg-[#0B0E14]">
       {showResponse ? (
         <>
           {/* Status Bar */}

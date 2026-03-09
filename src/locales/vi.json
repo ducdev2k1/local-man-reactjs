@@ -10,6 +10,8 @@
   },
   "addressBar": {
     "closeTab": "Đóng tab",
+    "layoutHorizontal": "Chuyển sang Bố cục Ngang",
+    "layoutVertical": "Chuyển sang Bố cục Dọc",
     "newRequest": "Yêu cầu mới",
     "selectRequest": "Chọn hoặc tạo một yêu cầu mới...",
     "send": "Gửi",
@@ -19,6 +21,7 @@
     "addFolder": "Thêm thư mục",
     "addRequest": "Thêm yêu cầu",
     "cancel": "Hủy",
+    "confirm": "Xác nhận",
     "confirmDeleteCollection": "Bạn có chắc chắn muốn xóa bộ sưu tập này và tất cả các yêu cầu bên trong không?",
     "confirmDeleteRequest": "Bạn có chắc chắn muốn xóa yêu cầu này không?",
     "copied": "Đã sao chép",
@@ -30,6 +33,15 @@
     "name": "Tên",
     "rename": "Đổi tên",
     "value": "Giá trị"
+  },
+  "environments": {
+    "add": "Thêm môi trường",
+    "edit": "Sửa đổi",
+    "empty": "Không có môi trường",
+    "makeActive": "Đặt mặc định",
+    "name": "Tên môi trường",
+    "rename": "Đổi tên môi trường",
+    "variables": "Các biến"
   },
   "footer": {
     "dbConnected": "IndexedDB: Đã kết nối",
@@ -64,6 +76,7 @@
   "sidebar": {
     "addCollection": "Thêm bộ sưu tập",
     "collections": "Bộ sưu tập",
+    "deleteCollection": "Xóa bộ sưu tập",
     "deleteRequest": "Xóa yêu cầu",
     "environments": "Môi trường",
     "history": "Lịch sử",

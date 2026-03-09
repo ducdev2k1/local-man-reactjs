@@ -15,3 +15,41 @@
 :root {
   color-scheme: light dark;
 }
+
+/* Global Custom Scrollbar (Postman style) */
+@layer base {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(156, 163, 175, 0.5) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: rgba(156, 163, 175, 0.5); /* Tailwind gray-400 at 50% */
+    border-radius: 10px;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: rgba(107, 114, 128, 0.8); /* Tailwind gray-500 at 80% */
+  }
+
+  .dark * {
+    scrollbar-color: rgba(75, 85, 99, 0.5) transparent;
+  }
+
+  .dark *::-webkit-scrollbar-thumb {
+    background: rgba(75, 85, 99, 0.5); /* Tailwind gray-600 at 50% */
+  }
+
+  .dark *::-webkit-scrollbar-thumb:hover {
+    background: rgba(107, 114, 128, 0.8); /* Tailwind gray-500 at 80% */
+  }
+}

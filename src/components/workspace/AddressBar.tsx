@@ -1,9 +1,11 @@
 import {
   ArrowRightCircle,
   ChevronDown,
+  Columns,
   Copy,
   Play,
   Plus,
+  Rows,
   X,
   XCircle,
 } from 'lucide-react';
@@ -31,9 +33,11 @@ import {
 interface IProps {
   handleSend: () => void;
   isSending: boolean;
+  layoutDirection: 'horizontal' | 'vertical';
+  setLayoutDirection: (val: 'horizontal' | 'vertical') => void;
 }
 
-export const AddressBar: React.FC<IProps> = ({ handleSend, isSending }) => {
+export const AddressBar: React.FC<IProps> = ({ handleSend, isSending, layoutDirection, setLayoutDirection }) => {
   const { t } = useTranslation();
   const tabsContainerRef = useRef<HTMLDivElement>(null);
 
@@ -48,6 +52,7 @@ export const AddressBar: React.FC<IProps> = ({ handleSend, isSending }) => {
     closeOthers,
     closeToTheRight,
     duplicateTab,
+    switchTab,
   } = useRequestStore();
 
   const handleUrlChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,7 +98,7 @@ export const AddressBar: React.FC<IProps> = ({ handleSend, isSending }) => {
       <div
         ref={tabsContainerRef}
         onWheel={handleWheel}
-        className="flex h-10 shrink-0 items-end border-b border-gray-200/50 dark:border-gray-800/50 px-2 pt-2 bg-white/5 dark:bg-black/5 overflow-x-auto hide-scrollbar select-none"
+        className="flex h-11 shrink-0 items-end border-b border-gray-200 dark:border-gray-800 px-2 pt-2 bg-gray-50 dark:bg-[#181c25] overflow-x-auto hide-scrollbar select-none"
       >
         {openTabs.map((tab) => (
           <ContextMenu key={tab.id}>
@@ -101,11 +106,11 @@ export const AddressBar: React.FC<IProps> = ({ handleSend, isSending }) => {
               <div
                 className={`flex h-full min-w-[140px] max-w-[200px] cursor-pointer items-center gap-2 rounded-t-lg px-3 transition-all relative ${
                   activeTabId === tab.id
-                    ? 'u-glass-deep dark:!bg-[#12151c]/80 border-t border-l border-r border-gray-200/50 dark:border-gray-700/50 z-10'
-                    : 'hover:bg-white/20 dark:hover:bg-white/5 text-gray-500 dark:text-gray-400'
+                    ? 'bg-white dark:bg-[#0B0E14] border border-b-0 border-gray-200 dark:border-gray-800 z-10'
+                    : 'hover:bg-gray-200/50 dark:hover:bg-gray-800/50 text-gray-500 dark:text-gray-400'
                 }`}
                 onClick={async () => {
-                  // Tab switch logic handled by store in real app
+                  switchTab(tab.id);
                 }}
               >
                 <MethodText method={tab.method as TypeHttpMethod} />
@@ -171,12 +176,12 @@ export const AddressBar: React.FC<IProps> = ({ handleSend, isSending }) => {
         </Button>
       </div>
 
-      <div className="flex shrink-0 items-center gap-2 p-3 bg-white/40 dark:bg-black/10 backdrop-blur-md">
+      <div className="flex shrink-0 items-center gap-2 p-3 bg-white dark:bg-[#0B0E14]">
         {activeRequest ? (
-          <div className="flex flex-1 items-center rounded-xl border border-gray-200/50 u-glass-deep dark:border-gray-700/50 shadow-sm focus-within:border-[#4f8ef7] focus-within:ring-2 focus-within:ring-[#4f8ef7]/10 transition-all overflow-hidden h-10">
+          <div className="flex flex-1 items-center rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-[#181c25] shadow-sm focus-within:border-[#4f8ef7] focus-within:ring-2 focus-within:ring-[#4f8ef7]/10 transition-all overflow-hidden h-10">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <div className="flex h-full cursor-pointer items-center gap-1 border-r border-gray-200/50 dark:border-gray-700/50 bg-gray-50/50 px-4 text-xs font-bold hover:bg-gray-100/50 dark:bg-[#181c25]/30 dark:hover:bg-gray-800/50 transition-colors shrink-0">
+                <div className="flex h-full cursor-pointer items-center gap-1 border-r border-gray-200 dark:border-gray-800 bg-transparent px-4 text-xs font-bold hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors shrink-0">
                   <MethodText method={activeRequest.method} />
                   <ChevronDown size={14} className="text-gray-500 ml-1" />
                 </div>
@@ -207,14 +212,21 @@ export const AddressBar: React.FC<IProps> = ({ handleSend, isSending }) => {
             />
           </div>
         ) : (
-          <div className="flex flex-1 items-center rounded-xl border border-gray-200/50 u-glass dark:border-gray-700/50 h-10 px-4 text-gray-400 text-[13px] italic">
+          <div className="flex flex-1 items-center rounded-lg border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-[#181c25] h-10 px-4 text-gray-400 text-[13px] italic">
             {t('addressBar.selectRequest')}
           </div>
         )}
         <Button
+          onClick={() => setLayoutDirection(layoutDirection === 'horizontal' ? 'vertical' : 'horizontal')}
+          className="h-10 w-10 p-0 rounded-lg flex items-center justify-center border border-gray-200 dark:border-gray-800 bg-gray-50 dark:bg-[#181c25] hover:bg-gray-100 dark:hover:bg-[#232834] text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+          title={layoutDirection === 'horizontal' ? t('addressBar.layoutVertical', 'Switch to Vertical Layout') : t('addressBar.layoutHorizontal', 'Switch to Horizontal Layout')}
+        >
+          {layoutDirection === 'horizontal' ? <Rows size={16} /> : <Columns size={16} />}
+        </Button>
+        <Button
           onClick={handleSend}
           disabled={isSending || !activeRequest}
-          className="h-10 rounded-xl px-6 text-xs font-semibold bg-[#4f8ef7] hover:bg-[#3b7de4] text-white shadow-lg shadow-blue-500/20 active:scale-95 disabled:active:scale-100 transition-all"
+          className="h-10 rounded-lg px-6 text-xs font-semibold bg-[#4f8ef7] hover:bg-[#3b7de4] text-white shadow-lg shadow-blue-500/20 active:scale-95 disabled:active:scale-100 transition-all"
         >
           {isSending ? (
             <div className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white"></div>
